@@ -1,0 +1,94 @@
+import { Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import HandModel from './HandModel';
+
+export default function Hand3DScene({ 
+  activeKey = '', 
+  nextKey = null,
+  className = "",
+  showInstructions = true 
+}) {
+  return (
+    <div className={`relative w-full h-64 bg-slate-900/50 rounded-xl border border-slate-700/50 overflow-hidden ${className}`}>
+      {/* Instructions overlay */}
+      {showInstructions && (
+        <div className="absolute top-3 left-3 z-10 bg-slate-800/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-slate-600/50">
+          <p className="text-slate-300 text-xs font-medium mb-1">3D Hand Guide</p>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded border border-cyan-500/30">
+              A S D F
+            </span>
+            <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
+              J K L ;
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Current key indicator */}
+      {nextKey && (
+        <div className="absolute top-3 right-3 z-10 bg-yellow-500/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-yellow-500/50">
+          <p className="text-yellow-300 text-xs font-medium mb-1">Next Key</p>
+          <span className="text-yellow-100 font-mono text-lg font-bold">
+            {nextKey === ' ' ? 'SPACE' : nextKey.toUpperCase()}
+          </span>
+        </div>
+      )}
+
+      {/* Three.js Canvas */}
+      <Canvas
+        camera={{ 
+          position: [0, 3, 6], 
+          fov: 50
+        }}
+        gl={{ 
+          antialias: true,
+          alpha: true
+        }}
+      >
+        {/* Simple lighting */}
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[10, 10, 5]} intensity={1} />
+        <pointLight position={[-10, -10, -10]} intensity={0.3} />
+
+        {/* 3D Hand Model */}
+        <Suspense fallback={<LoadingFallback />}>
+          <HandModel 
+            activeKey={activeKey}
+            scale={0.8}
+            position={[0, -1, 0]}
+          />
+        </Suspense>
+
+        {/* Controls */}
+        <OrbitControls
+          enablePan={false}
+          enableZoom={true}
+          enableRotate={true}
+          minDistance={4}
+          maxDistance={10}
+          autoRotate={false}
+        />
+      </Canvas>
+
+      {/* Status indicator */}
+      <div className="absolute bottom-3 left-3 z-10">
+        <div className="flex items-center gap-2 text-slate-400 text-xs">
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          <span>3D Hand Active</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Simple loading fallback
+function LoadingFallback() {
+  return (
+    <mesh position={[0, 0, 0]}>
+      <boxGeometry args={[2, 1, 0.5]} />
+      <meshStandardMaterial color="#4a5568" wireframe />
+    </mesh>
+  );
+}

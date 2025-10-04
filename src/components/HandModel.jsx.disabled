@@ -1,0 +1,142 @@
+import { useRef, useEffect, useState } from 'react';
+import { useGLTF } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+
+// Key mappings to finger positions
+const KEY_TO_FINGER = {
+  'a': 'left_pinky',
+  's': 'left_ring', 
+  'd': 'left_middle',
+  'f': 'left_index',
+  'j': 'right_index',
+  'k': 'right_middle',
+  'l': 'right_ring',
+  ';': 'right_pinky'
+};
+
+// Simple hand visualization with boxes for each finger
+export default function HandModel({ activeKey = '', scale = 1, position = [0, 0, 0] }) {
+  const groupRef = useRef();
+  const [pressedKeys, setPressedKeys] = useState(new Set());
+
+  // Handle keyboard events
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const key = event.key.toLowerCase();
+      if (KEY_TO_FINGER[key]) {
+        setPressedKeys(prev => new Set([...prev, key]));
+      }
+    };
+
+    const handleKeyUp = (event) => {
+      const key = event.key.toLowerCase();
+      if (KEY_TO_FINGER[key]) {
+        setPressedKeys(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(key);
+          return newSet;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
+  // Floating animation
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
+    }
+  });
+
+  const isKeyPressed = (key) => {
+    return pressedKeys.has(key) || activeKey?.toLowerCase() === key;
+  };
+
+  return (
+    <group ref={groupRef} position={position} scale={scale}>
+      {/* Left Hand */}
+      <group position={[-1.5, 0, 0]}>
+        {/* Left Pinky (A) */}
+        <mesh position={[-0.8, isKeyPressed('a') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.6, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('a') ? '#00ff88' : '#6366f1'} />
+        </mesh>
+        
+        {/* Left Ring (S) */}
+        <mesh position={[-0.3, isKeyPressed('s') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.7, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('s') ? '#00ff88' : '#6366f1'} />
+        </mesh>
+        
+        {/* Left Middle (D) */}
+        <mesh position={[0.2, isKeyPressed('d') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.8, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('d') ? '#00ff88' : '#6366f1'} />
+        </mesh>
+        
+        {/* Left Index (F) */}
+        <mesh position={[0.7, isKeyPressed('f') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.7, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('f') ? '#00ff88' : '#6366f1'} />
+        </mesh>
+        
+        {/* Left Palm */}
+        <mesh position={[0, -0.5, 0]}>
+          <boxGeometry args={[1.8, 0.3, 0.8]} />
+          <meshStandardMaterial color="#4338ca" />
+        </mesh>
+      </group>
+
+      {/* Right Hand */}
+      <group position={[1.5, 0, 0]}>
+        {/* Right Index (J) */}
+        <mesh position={[-0.7, isKeyPressed('j') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.7, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('j') ? '#00ff88' : '#8b5cf6'} />
+        </mesh>
+        
+        {/* Right Middle (K) */}
+        <mesh position={[-0.2, isKeyPressed('k') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.8, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('k') ? '#00ff88' : '#8b5cf6'} />
+        </mesh>
+        
+        {/* Right Ring (L) */}
+        <mesh position={[0.3, isKeyPressed('l') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.7, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed('l') ? '#00ff88' : '#8b5cf6'} />
+        </mesh>
+        
+        {/* Right Pinky (;) */}
+        <mesh position={[0.8, isKeyPressed(';') ? -0.2 : 0, 0]}>
+          <boxGeometry args={[0.15, 0.6, 0.15]} />
+          <meshStandardMaterial color={isKeyPressed(';') ? '#00ff88' : '#8b5cf6'} />
+        </mesh>
+        
+        {/* Right Palm */}
+        <mesh position={[0, -0.5, 0]}>
+          <boxGeometry args={[1.8, 0.3, 0.8]} />
+          <meshStandardMaterial color="#7c3aed" />
+        </mesh>
+      </group>
+
+      {/* Base/Wrists */}
+      <mesh position={[0, -1, 0]}>
+        <boxGeometry args={[4, 0.2, 1]} />
+        <meshStandardMaterial color="#374151" />
+      </mesh>
+    </group>
+  );
+}
+
+// Remove the GLTF preload since we're not using it
+// useGLTF.preload('/hand.glb');
