@@ -41,7 +41,7 @@ export default function Keyboard({ activeKey = '', nextKey = null }) {
       { key: '0', label: '0', width: 'w-12' },
       { key: '-', label: '-', width: 'w-12' },
       { key: '=', label: '=', width: 'w-12' },
-      { key: 'backspace', label: '⌫', width: 'w-20' },
+      { key: 'backspace', label: 'Backspace', width: 'w-20' },
     ],
     // Row 2 - Tab and QWERTY
     [
@@ -62,7 +62,7 @@ export default function Keyboard({ activeKey = '', nextKey = null }) {
     ],
     // Row 3 - Caps Lock and ASDF
     [
-      { key: 'capslock', label: 'Caps', width: 'w-20' },
+      { key: 'capslock', label: 'Caps Lock', width: 'w-20' },
       { key: 'a', label: 'A', width: 'w-12', homeRow: true },
       { key: 's', label: 'S', width: 'w-12', homeRow: true },
       { key: 'd', label: 'D', width: 'w-12', homeRow: true },
@@ -94,11 +94,11 @@ export default function Keyboard({ activeKey = '', nextKey = null }) {
     // Row 5 - Space bar and modifiers
     [
       { key: 'control', label: 'Ctrl', width: 'w-16' },
+      { key: 'meta', label: 'Win', width: 'w-16' },
       { key: 'alt', label: 'Alt', width: 'w-16' },
-      { key: 'meta', label: 'Cmd', width: 'w-16' },
       { key: ' ', label: 'Space', width: 'flex-1' },
-      { key: 'meta', label: 'Cmd', width: 'w-16' },
       { key: 'alt', label: 'Alt', width: 'w-16' },
+      { key: 'meta', label: 'Win', width: 'w-16' },
       { key: 'control', label: 'Ctrl', width: 'w-16' },
     ],
   ];

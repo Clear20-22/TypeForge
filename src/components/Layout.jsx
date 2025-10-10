@@ -13,6 +13,7 @@ export default function Layout() {
     { path: '/', label: 'Home', icon: '🏠' },
     { path: '/lessons', label: 'Lessons', icon: '📚' },
     { path: '/practice', label: 'Practice', icon: '⌨️' },
+    { path: '/game', label: 'Game', icon: '🎮' },
   ];
 
   return (

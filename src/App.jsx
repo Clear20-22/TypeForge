@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Lessons from './pages/Lessons';
 import Practice from './pages/Practice';
+import Game from './pages/Game';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="lessons" element={<Lessons />} />
           <Route path="practice" element={<Practice />} />
+          <Route path="game" element={<Game />} />
         </Route>
       </Routes>
     </Router>
